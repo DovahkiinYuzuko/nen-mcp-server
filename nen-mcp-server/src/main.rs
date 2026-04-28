@@ -12,18 +12,16 @@ use tools::inspect_file::inspect_file;
 use tools::read_hex::read_hex;
 
 #[cfg(windows)]
-fn fix_windows_output() {
-    use windows_sys::Win32::System::Console::{GetConsoleOutputCP, SetConsoleOutputCP};
+fn fix_windows_console() {
+    use windows_sys::Win32::System::Console::{SetConsoleOutputCP, SetConsoleCP};
     unsafe {
-        let cp = GetConsoleOutputCP();
-        if cp != 65001 {
-            SetConsoleOutputCP(65001);
-        }
-    }
+        SetConsoleOutputCP(65001);
+        SetConsoleCP(65001);
+    };
 }
 
 #[cfg(not(windows))]
-fn fix_windows_output() {}
+fn fix_windows_console() {}
 
 fn write_response(res_str: &str) {
     let mut stdout = std::io::stdout();
@@ -33,7 +31,7 @@ fn write_response(res_str: &str) {
 }
 
 fn main() {
-    fix_windows_output();
+    fix_windows_console();
     let stdin = io::stdin();
     for line in stdin.lock().lines() {
         let line = match line {
