@@ -1,0 +1,12 @@
+{
+  "name": "non-english-normalization-mcp",
+  "version": "0.1.0",
+  "description": "[ENG] A robust MCP server that completely resolves character encoding issues (such as Shift-JIS corruption) in Windows CLI environments, enabling AI agents to accurately read and parse non-English documents. [JPN] Windows CLI環境における文字化け（Shift-JIS等）を完全に解決し、AIエージェントが非英語圏のドキュメントを正確に読み取り、解析できるようにする堅牢なMCPサーバーです。",
+  "mcpServers": {
+    "nen-server": {
+      "command": "${extensionPath}/bin/nen-mcp-server.exe",
+      "args": []
+    }
+  },
+  "contextFileName": "GEMINI.md"
+}
