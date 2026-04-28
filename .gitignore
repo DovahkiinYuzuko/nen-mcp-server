@@ -1,5 +1,6 @@
 # --- Build Artifacts ---
 nen-mcp-server/target/
+bin/
 
 # --- Internal Development Tools ---
 .qodo/
@@ -12,12 +13,15 @@ nen-mcp-server/課題.md
 test_outline.py
 test_output_utf8.json
 test_sjis.txt
+test_cli_output.txt
 Test.cs
 
 # --- User Local Config ---
 nen-mcp-server/mcp_config_example.json
 
 # --- OS / IDE ---
+.history/
 .vscode/
 .DS_Store
 Thumbs.db
+
