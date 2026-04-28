@@ -1,6 +1,6 @@
 # --- Build Artifacts ---
 nen-mcp-server/target/
-bin/
+# bin/
 *.exe
 *.pdb
 
@@ -10,7 +10,7 @@ conductor/
 変数関数仕様書.md
 nen-mcp-server全コード集*.md
 nen-mcp-server全コード集.pdf
-nen-mcp-server/課題.md
+nen-mcp-server/課顁Emd
 
 # --- Temporary / Test Files ---
 test.ps1
