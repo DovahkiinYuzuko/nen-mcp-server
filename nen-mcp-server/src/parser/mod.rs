@@ -1,5 +1,7 @@
 use tree_sitter::Language;
 
+pub mod languages;
+
 pub fn get_language(extension: &str) -> Option<Language> {
     match extension.to_lowercase().as_str() {
         "rs" => Some(tree_sitter_rust::language()),
