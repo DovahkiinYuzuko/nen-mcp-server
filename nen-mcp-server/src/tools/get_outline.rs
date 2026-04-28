@@ -17,21 +17,22 @@ pub fn get_outline(path: &str) -> Result<String> {
     let extension = Path::new(path)
         .extension()
         .and_then(|s| s.to_str())
-        .ok_or_else(|| anyhow!("No extension found"))?;
+        .ok_or_else(|| anyhow!("Outline Error: No file extension found for '{}'. Extension is required to determine the language parser.", path))?;
 
     let language = get_language(extension)
-        .ok_or_else(|| anyhow!("Unsupported language: {}", extension))?;
+        .ok_or_else(|| anyhow!("Outline Error: Unsupported file extension '.{}' for path '{}'. Supported extensions are: .rs, .py, .cs.", extension, path))?;
 
     let mut parser = Parser::new();
-    parser.set_language(language)?;
+    parser.set_language(language)
+        .map_err(|e| anyhow!("Outline Error: Internal error setting up parser for language '{}': {}", extension, e))?;
 
     let tree = parser.parse(&content, None)
-        .ok_or_else(|| anyhow!("Failed to parse file"))?;
+        .ok_or_else(|| anyhow!("Outline Error: Failed to parse content of '{}'. The file might be corrupted or in an unexpected format.", path))?;
 
     let mut outline = Vec::new();
     traverse(tree.root_node(), &content, &mut outline);
 
-    serde_json::to_string(&outline).map_err(|e| anyhow!("Failed to serialize outline to JSON: {}", e))
+    serde_json::to_string(&outline).map_err(|e| anyhow!("Outline Error: Internal error serializing outline JSON for '{}': {}", path, e))
 }
 
 fn traverse(node: Node, source: &str, outline: &mut Vec<OutlineItem>) {

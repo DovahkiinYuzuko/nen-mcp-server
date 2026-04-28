@@ -24,7 +24,9 @@ pub struct SearchResult {
 
 pub fn inspect_file(path: &str, search_query: Option<String>) -> Result<String> {
     let path_buf = validate_and_canonicalize(path)?;
-    let metadata = fs::metadata(&path_buf)?;
+    let metadata = fs::metadata(&path_buf).map_err(|e| {
+        anyhow::anyhow!("Metadata Error: Failed to retrieve file metadata for '{}'. Details: {}", path, e)
+    })?;
     let size = metadata.len();
     
     let created = metadata.created().unwrap_or(SystemTime::UNIX_EPOCH);
@@ -33,7 +35,9 @@ pub fn inspect_file(path: &str, search_query: Option<String>) -> Result<String> 
     let created_dt: DateTime<Utc> = created.into();
     let modified_dt: DateTime<Utc> = modified.into();
     
-    let bytes = fs::read(&path_buf)?;
+    let bytes = fs::read(&path_buf).map_err(|e| {
+        anyhow::anyhow!("Read Error: Failed to read content from '{}'. Details: {}", path, e)
+    })?;
     let (content, encoding) = decode_to_utf8(&bytes);
     
     let lines: Vec<&str> = content.lines().collect();
@@ -70,5 +74,7 @@ pub fn inspect_file(path: &str, search_query: Option<String>) -> Result<String> 
         search_results,
     };
     
-    Ok(serde_json::to_string_pretty(&result)?)
+    serde_json::to_string_pretty(&result).map_err(|e| {
+        anyhow::anyhow!("Internal Error: Failed to format inspection results for '{}' into JSON. Details: {}", path, e)
+    })
 }

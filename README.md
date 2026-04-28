@@ -44,3 +44,24 @@ If you are using Gemini CLI, you can easily install it with the following comman
 ```bash
 gemini extensions install https://github.com/DovahkiinYuzuko/nen-mcp-server
 ```
+
+### CLI Mode
+You can also run the server directly from the terminal for testing.
+
+```bash
+# Safe read
+./nen-mcp-server safe-read path/to/file.txt
+
+# Get outline
+./nen-mcp-server get-outline path/to/code.rs
+
+# Inspect file
+./nen-mcp-server inspect-file path/to/file.txt --search "keyword"
+
+# Read hex
+./nen-mcp-server read-hex path/to/binary.bin
+```
+
+```bash
+gemini extensions install https://github.com/DovahkiinYuzuko/nen-mcp-server
+```
