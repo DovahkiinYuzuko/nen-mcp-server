@@ -1,7 +1,7 @@
 use crate::tools::safe_read::safe_read;
 use crate::parser::get_language;
 use tree_sitter::{Parser, Node};
-use anyhow::{Result, anyhow};
+use anyhow::{Result, anyhow, Context};
 use std::path::Path;
 use serde::Serialize;
 
@@ -13,26 +13,29 @@ struct OutlineItem {
 }
 
 pub fn get_outline(path: &str) -> Result<String> {
-    let (content, _) = safe_read(path, None, None)?;
+    let (content, _) = safe_read(path, None, None)
+        .with_context(|| format!("アウトライン取得のためのファイル読み取り（'{}'）に失敗しました。", path))?;
+    
     let extension = Path::new(path)
         .extension()
         .and_then(|s| s.to_str())
-        .ok_or_else(|| anyhow!("Outline Error: No file extension found for '{}'. Extension is required to determine the language parser.", path))?;
+        .ok_or_else(|| anyhow!("ファイル '{}' に拡張子がありません。パーサーを決定するために拡張子が必要です。", path))?;
 
     let language = get_language(extension)
-        .ok_or_else(|| anyhow!("Outline Error: Unsupported file extension '.{}' for path '{}'. Supported extensions are: .rs, .py, .cs.", extension, path))?;
+        .ok_or_else(|| anyhow!("拡張子 '.{}' はサポートされていません（ファイル: '{}'）。現在サポートされているのは .rs, .py, .cs です。", extension, path))?;
 
     let mut parser = Parser::new();
     parser.set_language(language)
-        .map_err(|e| anyhow!("Outline Error: Internal error setting up parser for language '{}': {}", extension, e))?;
+        .with_context(|| format!("言語 '{}' 用のパーサーのセットアップに失敗しました。", extension))?;
 
     let tree = parser.parse(&content, None)
-        .ok_or_else(|| anyhow!("Outline Error: Failed to parse content of '{}'. The file might be corrupted or in an unexpected format.", path))?;
+        .ok_or_else(|| anyhow!("ファイル '{}' の解析（パース）に失敗しました。ファイルが壊れているか、対応していない形式の可能性があります。", path))?;
 
     let mut outline = Vec::new();
     traverse(tree.root_node(), &content, &mut outline);
 
-    serde_json::to_string(&outline).map_err(|e| anyhow!("Outline Error: Internal error serializing outline JSON for '{}': {}", path, e))
+    serde_json::to_string(&outline)
+        .with_context(|| format!("ファイル '{}' のアウトライン結果（JSON）の生成に失敗しました。", path))
 }
 
 fn traverse(node: Node, source: &str, outline: &mut Vec<OutlineItem>) {

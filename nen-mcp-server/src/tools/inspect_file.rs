@@ -1,7 +1,7 @@
 use std::fs;
 use std::time::SystemTime;
 use chrono::{DateTime, Utc};
-use anyhow::Result;
+use anyhow::{Result, Context};
 use serde::Serialize;
 use crate::encoding::decode_to_utf8;
 use super::validate_and_canonicalize;
@@ -24,9 +24,8 @@ pub struct SearchResult {
 
 pub fn inspect_file(path: &str, search_query: Option<String>) -> Result<String> {
     let path_buf = validate_and_canonicalize(path)?;
-    let metadata = fs::metadata(&path_buf).map_err(|e| {
-        anyhow::anyhow!("Metadata Error: Failed to retrieve file metadata for '{}'. Details: {}", path, e)
-    })?;
+    let metadata = fs::metadata(&path_buf)
+        .with_context(|| format!("ファイル '{}' のメタデータ（作成日時やサイズなど）を取得できませんでした。", path))?;
     let size = metadata.len();
     
     let created = metadata.created().unwrap_or(SystemTime::UNIX_EPOCH);
@@ -35,9 +34,8 @@ pub fn inspect_file(path: &str, search_query: Option<String>) -> Result<String> 
     let created_dt: DateTime<Utc> = created.into();
     let modified_dt: DateTime<Utc> = modified.into();
     
-    let bytes = fs::read(&path_buf).map_err(|e| {
-        anyhow::anyhow!("Read Error: Failed to read content from '{}'. Details: {}", path, e)
-    })?;
+    let bytes = fs::read(&path_buf)
+        .with_context(|| format!("ファイル '{}' の内容を読み取ることができませんでした。", path))?;
     let (content, encoding) = decode_to_utf8(&bytes);
     
     let lines: Vec<&str> = content.lines().collect();
@@ -74,7 +72,6 @@ pub fn inspect_file(path: &str, search_query: Option<String>) -> Result<String> 
         search_results,
     };
     
-    serde_json::to_string_pretty(&result).map_err(|e| {
-        anyhow::anyhow!("Internal Error: Failed to format inspection results for '{}' into JSON. Details: {}", path, e)
-    })
+    serde_json::to_string_pretty(&result)
+        .with_context(|| format!("ファイル '{}' の解析結果をJSON形式に変換できませんでした。", path))
 }

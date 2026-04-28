@@ -84,7 +84,9 @@ fn handle_tool_call(name: &str, arguments: Value) -> CallToolResult {
             let path = arguments["path"].as_str().unwrap_or("");
             let range = arguments["range"].as_array().and_then(|a| {
                 if a.len() == 2 {
-                    Some([a[0].as_u64()? as usize, a[1].as_u64()? as usize])
+                    let start = a[0].as_u64()? as usize;
+                    let end = a[1].as_u64()? as usize;
+                    Some([start, end])
                 } else {
                     None
                 }
@@ -93,14 +95,15 @@ fn handle_tool_call(name: &str, arguments: Value) -> CallToolResult {
 
             match safe_read(path, range, tail) {
                 Ok((content, encoding)) => {
-                    let text = format!("[Encoding: {}]\n{}", encoding, content);
+                    let text = format!("[推定エンコーディング: {}]\n{}", encoding, content);
                     CallToolResult {
                         content: vec![ToolContent::Text { text }],
                         is_error: Some(false),
                     }
                 },
                 Err(e) => CallToolResult {
-                    content: vec![ToolContent::Text { text: e.to_string() }],
+                    // {:#} を使うことで、anyhow のコンテキスト（エラーの連鎖）を表示する
+                    content: vec![ToolContent::Text { text: format!("エラーが発生しました:\n{:#}", e) }],
                     is_error: Some(true),
                 }
             }
@@ -113,7 +116,7 @@ fn handle_tool_call(name: &str, arguments: Value) -> CallToolResult {
                     is_error: Some(false),
                 },
                 Err(e) => CallToolResult {
-                    content: vec![ToolContent::Text { text: e.to_string() }],
+                    content: vec![ToolContent::Text { text: format!("アウトライン取得中にエラーが発生しました:\n{:#}", e) }],
                     is_error: Some(true),
                 }
             }
@@ -127,7 +130,7 @@ fn handle_tool_call(name: &str, arguments: Value) -> CallToolResult {
                     is_error: Some(false),
                 },
                 Err(e) => CallToolResult {
-                    content: vec![ToolContent::Text { text: e.to_string() }],
+                    content: vec![ToolContent::Text { text: format!("ファイル解析中にエラーが発生しました:\n{:#}", e) }],
                     is_error: Some(true),
                 }
             }
@@ -142,13 +145,13 @@ fn handle_tool_call(name: &str, arguments: Value) -> CallToolResult {
                     is_error: Some(false),
                 },
                 Err(e) => CallToolResult {
-                    content: vec![ToolContent::Text { text: e.to_string() }],
+                    content: vec![ToolContent::Text { text: format!("バイナリ読み取り中にエラーが発生しました:\n{:#}", e) }],
                     is_error: Some(true),
                 }
             }
         },
         _ => CallToolResult {
-            content: vec![ToolContent::Text { text: format!("Tool not found: {}", name) }],
+            content: vec![ToolContent::Text { text: format!("ツール '{}' は見つかりませんでした。", name) }],
             is_error: Some(true),
         }
     }

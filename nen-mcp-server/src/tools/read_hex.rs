@@ -1,24 +1,21 @@
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
-use anyhow::Result;
+use anyhow::{Result, Context};
 use super::validate_and_canonicalize;
 
 pub fn read_hex(path: &str, offset: Option<u64>, length: Option<usize>) -> Result<String> {
     let path_buf = validate_and_canonicalize(path)?;
-    let mut file = File::open(&path_buf).map_err(|e| {
-        anyhow::anyhow!("Open Error: Failed to open '{}' for binary reading. Details: {}", path, e)
-    })?;
+    let mut file = File::open(&path_buf)
+        .with_context(|| format!("バイナリ読み取りのためにファイル '{}' を開くことができませんでした。", path))?;
     let start_offset = offset.unwrap_or(0);
     let read_len = length.unwrap_or(256);
     
-    file.seek(SeekFrom::Start(start_offset)).map_err(|e| {
-        anyhow::anyhow!("Seek Error: Failed to seek to offset {} in file '{}'. Details: {}", start_offset, path, e)
-    })?;
+    file.seek(SeekFrom::Start(start_offset))
+        .with_context(|| format!("ファイル '{}' のオフセット {} へのシークに失敗しました。", path, start_offset))?;
     
     let mut buffer = vec![0u8; read_len];
-    let bytes_read = file.read(&mut buffer).map_err(|e| {
-        anyhow::anyhow!("Read Error: Failed to read binary data from '{}' at offset {}. Details: {}", path, start_offset, e)
-    })?;
+    let bytes_read = file.read(&mut buffer)
+        .with_context(|| format!("ファイル '{}' のオフセット {} からのデータ読み取りに失敗しました。", path, start_offset))?;
     buffer.truncate(bytes_read);
     
     let mut output = String::new();
