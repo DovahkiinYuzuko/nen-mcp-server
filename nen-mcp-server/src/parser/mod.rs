@@ -24,8 +24,8 @@ pub fn get_language(extension: &str) -> Option<Language> {
         "rb" => Some(tree_sitter_ruby::language()),
         "swift" => Some(tree_sitter_swift::language()),
         "dockerfile" | "docker" => Some(tree_sitter_dockerfile::language()),
-        "nix" => Some(tree_sitter_nix::language()),
-        "md" | "markdown" => Some(tree_sitter_markdown::language()),
+        // "nix" => Some(tree_sitter_nix::language()),
+        // "md" | "markdown" => Some(tree_sitter_markdown::language()),
         "ps1" | "psm1" => Some(tree_sitter_powershell::language()),
         _ => None,
     }

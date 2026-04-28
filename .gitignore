@@ -1,29 +1,32 @@
 # --- Build Artifacts ---
 nen-mcp-server/target/
 bin/
+*.exe
+*.pdb
 
-# --- Internal Development Tools ---
-.qodo/
+# --- Documentation & Specs (Excluded from GitHub) ---
+docs/
 conductor/
-docs/superpowers/plans/
-docs/superpowers/specs/
+変数関数仕様書.md
+nen-mcp-server全コード集*.md
+nen-mcp-server全コード集.pdf
 nen-mcp-server/課題.md
-nen-mcp-server/変数関数仕様書.md
-nen-mcp-server全コード集.md
 
-# --- Temporary Test Files ---
+# --- Temporary / Test Files ---
+test.ps1
 test_outline.py
 test_output_utf8.json
 test_sjis.txt
 test_cli_output.txt
 Test.cs
+*.tmp
 
-# --- User Local Config ---
-nen-mcp-server/mcp_config_example.json
-
-# --- OS / IDE ---
+# --- Internal Tools & IDE ---
 .history/
+.qodo/
 .vscode/
 .DS_Store
 Thumbs.db
 
+# --- Rust specific ---
+nen-mcp-server/Cargo.lock
