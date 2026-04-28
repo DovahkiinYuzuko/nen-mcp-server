@@ -1,6 +1,6 @@
 # NEN (Non-English Normalization) MCP Server
 
-マルチバイト文字（日本語など）を含むファイルの解析・読み込みを強力にサポートする MCP サーバーです。
+マルチバイト文字（日本語など）を含むファイルの解析・読み込みを強力にサポートする MCP サーバーです。Windows 環境でのパス問題や文字化けを完全に解決します。
 
 - [日本語](#日本語)
 - [ENGLISH](#english)
@@ -10,19 +10,27 @@
 ## 日本語
 
 ### 概要
-NEN MCP Server は、Windows 環境における PowerShell の文字化けや、Shift-JIS などの多様なエンコーディングが混在するプロジェクトでのファイル操作を最適化するために設計されました。LLM が非英語圏のコードベースを正確に理解するための「目」となります。
+NEN MCP Server は、Windows 環境における PowerShell の文字化けや、Shift-JIS などの多様なエンコーディングが混在するプロジェクトでのファイル操作を最適化するために設計されました。
+特に Windows 特有の UNC パス（`\\?\` 接頭辞）によるエラーを回避し、AI エージェントが非英語圏のコードベースを正確に理解するための「目」となります。
 
 ### 主な機能
-- **自動エンコーディング検知**: UTF-8, Shift-JIS, EUC-JP などの文字コードを自動で判別し、正規化して読み込みます。
-- **バイナリ・ヘキサ表示**: テキストとして読み込めないファイルの中身を 16 進数で確認できます。
-- **アウトライン解析**: ソースコードの構造（クラス、関数など）を高速に抽出します。
-- **安全な読み込み**: 巨大なファイルや壊れたエンコーディングのファイルでも、クラッシュせずに安全に処理します。
+- **Windows パス問題の解決**: `dunce` を採用し、Windows の拡張パス接頭辞に起因するファイルアクセスエラーを回避します。
+- **自動エンコーディング検知**: UTF-8, Shift-JIS, EUC-JP などの文字コードを自動判別し、UTF-8 に正規化して読み込みます。
+- **CLI/MCP ハイブリッドモード**: サーバーとしてだけでなく、コマンドラインツールとしても動作し、直接ファイルの検証が可能です。
+- **アウトライン解析**: Tree-sitter を使用し、関数の定義などを構造的に抽出します。
 
 ### インストール方法
-Gemini CLI を使用している場合、以下のコマンドで簡単にインストールできます。
-
 ```bash
 gemini extensions install https://github.com/DovahkiinYuzuko/nen-mcp-server
+```
+
+### CLI モードの使い方
+```bash
+# ファイルの安全な読み込み
+./bin/nen-mcp-server.exe safe-read "path/to/ファイル.txt"
+
+# MCPサーバーとして明示的に起動
+./bin/nen-mcp-server.exe --mcp
 ```
 
 ---
@@ -30,38 +38,19 @@ gemini extensions install https://github.com/DovahkiinYuzuko/nen-mcp-server
 ## ENGLISH
 
 ### Overview
-NEN (Non-English Normalization) MCP Server is designed to optimize file operations in projects where multi-byte characters (such as Japanese) and various encodings like Shift-JIS are mixed. It acts as the "eyes" for LLMs to accurately understand non-English codebases.
+NEN (Non-English Normalization) MCP Server is designed to optimize file operations in environments with multi-byte characters (such as Japanese) and varied encodings. It effectively resolves Windows-specific path issues and terminal encoding corruption.
 
 ### Key Features
-- **Automatic Encoding Detection**: Automatically detects and normalizes character codes such as UTF-8, Shift-JIS, and EUC-JP.
-- **Hex View**: Inspect the contents of files that cannot be read as text in hexadecimal format.
-- **Outline Analysis**: Quickly extract the structure of source code (classes, functions, etc.).
-- **Safe Read**: Safely processes large or corrupted encoding files without crashing.
+- **UNC Path Fix**: Avoids `\\?\` prefix issues on Windows using `dunce` for reliable file access.
+- **Automatic Encoding Detection**: Detects and normalizes UTF-8, Shift-JIS, and EUC-JP into standard UTF-8.
+- **Hybrid CLI/MCP Mode**: Works both as a standardized MCP server and a standalone CLI tool.
+- **Structural Analysis**: Extracts code structure (functions, classes) using Tree-sitter.
 
-### Installation
-If you are using Gemini CLI, you can easily install it with the following command:
-
+### CLI Usage
 ```bash
-gemini extensions install https://github.com/DovahkiinYuzuko/nen-mcp-server
-```
+# Standalone execution
+./bin/nen-mcp-server.exe safe-read "path/to/file.txt"
 
-### CLI Mode
-You can also run the server directly from the terminal for testing.
-
-```bash
-# Safe read
-./nen-mcp-server safe-read path/to/file.txt
-
-# Get outline
-./nen-mcp-server get-outline path/to/code.rs
-
-# Inspect file
-./nen-mcp-server inspect-file path/to/file.txt --search "keyword"
-
-# Read hex
-./nen-mcp-server read-hex path/to/binary.bin
-```
-
-```bash
-gemini extensions install https://github.com/DovahkiinYuzuko/nen-mcp-server
+# Force MCP mode
+./bin/nen-mcp-server.exe --mcp
 ```
