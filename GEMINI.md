@@ -1,27 +1,29 @@
 # Non-EnglishNormalization (NEN) Extension Context
 
-## Overview
-This extension provides the `nen-server` MCP, which is designed to handle file reading and structural parsing in environments where character encoding issues (e.g., Shift-JIS on Windows) frequently occur.
+## 🚨 CRITICAL: FILE READING MANDATE 🚨
+This workspace/extension provides the `nen-server` MCP for safe file operations. Because this environment frequently encounters Shift-JIS or other non-UTF-8 encodings (causing mojibake), you have **strict overrides** on how to read files.
 
-## Usage Guidelines
-When assisting the user with reading local files, analyzing source code structure, or investigating binary files in this workspace, you MUST prioritize the tools provided by `nen-server` over standard shell commands (`cat`, `type`, etc.) or generic file reading tools.
+### 🚫 FORBIDDEN ACTIONS
+- **DO NOT USE** the built-in `read_file` tool for reading local text/code files if there is any chance of character encoding issues. If you use `read_file` and get garbled text (mojibake), **NEVER** use it again for that file.
+- **DO NOT USE** `cat`, `Get-Content`, `type`, or any shell commands to read files.
 
-### Available Tools:
-1. **`safe-read`**:
-   - **When to use**: Whenever you need to read the contents of a text file, source code, or documentation.
-   - **Why**: It automatically detects the character encoding (e.g., Shift-JIS, UTF-8) and normalizes the output, preventing garbled text (mojibake) in your context window.
-   - **Note**: Supports `range` (line/byte specification) and `tail` for reading large files efficiently.
+### ✅ MANDATORY TOOLS (Use `nen-server` MCP)
+You **MUST** prioritize the following MCP tools provided by `nen-server` (the tool names will be prefixed with `mcp_nen-server_` or similar in your tool list):
+
+1. **`safe-read` (Direct Replacement for `read_file`)**:
+   - **When to use**: **ALWAYS** prioritize this tool when you need to read the contents of a text file, source code, or documentation.
+   - **Why**: It automatically detects and converts Shift-JIS/EUC-JP/UTF-8, preventing garbled text in your context.
+   - **Features**: Supports reading specific ranges or tails.
 
 2. **`get-outline`**:
-   - **When to use**: When you need to understand the architecture, classes, or functions within a source code file without reading its entire content.
-   - **Why**: Uses Tree-sitter to parse the AST and return a concise JSON structure of the file, saving tokens and improving comprehension.
+   - **When to use**: When you need to understand the structure (classes, functions, methods) of a source code file without consuming tokens to read the entire file.
+   - **Why**: Parses the AST via Tree-sitter and returns a lightweight JSON map of the file's architecture.
 
 3. **`inspect-file`**:
-   - **When to use**: When you need metadata (size, lines, estimated encoding) or need to search for a specific keyword within a file and view its surrounding context.
+   - **When to use**: To get file metadata (size, line count, estimated encoding) or to quickly search for a keyword and view its surrounding context (encoding-aware `grep`).
 
 4. **`read-hex`**:
-   - **When to use**: When you need to inspect binary files, executables, or when `safe_read` fails to decode a file properly. Returns a traditional hex dump.
+   - **When to use**: For inspecting binary files, executables, or when `safe-read` cannot decode a file. Returns a clean hex dump.
 
-## Strict Rules
-- Do NOT use `cat` or `Get-Content` to read files if `safe_read` is applicable.
-- If a file appears to contain garbled text when read with a standard tool, immediately switch to using `safe_read`.
+## Execution Enforcement
+Before you attempt to read ANY file, remember this extension exists. If you encounter an encoding issue or garbled text, you MUST immediately switch to `safe-read`. Do not attempt to fix encoding issues via shell commands.
