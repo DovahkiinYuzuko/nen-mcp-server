@@ -5,7 +5,7 @@
   "mcpServers": {
     "nen-server": {
       "command": "${extensionPath}/bin/nen-mcp-server.exe",
-      "args": []
+      "args": ["--mcp"]
     }
   },
   "contextFileName": "GEMINI.md"
