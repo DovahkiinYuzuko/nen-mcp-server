@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct JsonRpcRequest {
     pub jsonrpc: String,
     pub id: Value,
@@ -10,6 +11,7 @@ pub struct JsonRpcRequest {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct JsonRpcResponse {
     pub jsonrpc: String,
     pub id: Value,
@@ -20,6 +22,7 @@ pub struct JsonRpcResponse {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct JsonRpcError {
     pub code: i32,
     pub message: String,
@@ -28,6 +31,7 @@ pub struct JsonRpcError {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct InitializeResult {
     pub protocol_version: String,
     pub capabilities: ServerCapabilities,
@@ -35,29 +39,34 @@ pub struct InitializeResult {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ServerCapabilities {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tools: Option<ToolCapabilities>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ToolCapabilities {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub list_changed: Option<bool>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ServerInfo {
     pub name: String,
     pub version: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ToolListResult {
     pub tools: Vec<Tool>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Tool {
     pub name: String,
     pub description: Option<String>,
@@ -65,12 +74,14 @@ pub struct Tool {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CallToolRequest {
     pub name: String,
     pub arguments: Option<Value>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CallToolResult {
     pub content: Vec<ToolContent>,
     #[serde(skip_serializing_if = "Option::is_none")]
