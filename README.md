@@ -26,7 +26,7 @@ NEN MCP Server は、Windows 環境における PowerShell の文字化けや、
 
 #### Antigravity CLI (推奨)
 ```bash
-agy --install-extension https://github.com/DovahkiinYuzuko/nen-mcp-server
+agy plugin install https://github.com/DovahkiinYuzuko/nen-mcp-server
 ```
 
 #### Gemini CLI (旧環境向け・非推奨)
@@ -63,7 +63,7 @@ NEN (Non-English Normalization) MCP Server is designed to optimize file operatio
 
 #### Antigravity CLI (Recommended)
 ```bash
-agy --install-extension https://github.com/DovahkiinYuzuko/nen-mcp-server
+agy plugin install https://github.com/DovahkiinYuzuko/nen-mcp-server
 ```
 
 #### Gemini CLI (Legacy/Deprecated)
