@@ -4,7 +4,7 @@
   "description": "[ENG] A robust MCP server that completely resolves character encoding issues (such as Shift-JIS corruption) in Windows CLI environments, enabling AI agents to accurately read and parse non-English documents. [JPN] Windows CLI環境における文字化け（Shift-JIS等）を完全に解決し、AIエージェントが非英語圏のドキュメントを正確に読み取り、解析できるようにする強力なMCPサーバーです。",
   "mcpServers": {
     "nen": {
-      "command": "./bin/nen-mcp-server",
+      "command": "${extensionPath}${/}nen-mcp-server${binExtension}",
       "args": [
         "--mcp"
       ]
