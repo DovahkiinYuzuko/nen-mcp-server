@@ -20,6 +20,16 @@ NEN MCP Server は、Windows 環境における PowerShell の文字化けや、
 - **アウトライン解析**: Tree-sitter を使用し、関数の定義などを構造的に抽出します。
 
 ### インストール方法
+
+> [!WARNING]
+> Gemini CLIは2026年6月にサービス終了予定です。後継ツールである **Antigravity CLI** への移行を強く推奨します。
+
+#### Antigravity CLI (推奨)
+```bash
+agy --install-extension https://github.com/DovahkiinYuzuko/nen-mcp-server
+```
+
+#### Gemini CLI (旧環境向け・非推奨)
 ```bash
 gemini extensions install https://github.com/DovahkiinYuzuko/nen-mcp-server
 ```
@@ -45,6 +55,21 @@ NEN (Non-English Normalization) MCP Server is designed to optimize file operatio
 - **Automatic Encoding Detection**: Detects and normalizes UTF-8, Shift-JIS, and EUC-JP into standard UTF-8.
 - **Hybrid CLI/MCP Mode**: Works both as a standardized MCP server and a standalone CLI tool.
 - **Structural Analysis**: Extracts code structure (functions, classes) using Tree-sitter.
+
+### Installation
+
+> [!WARNING]
+> Gemini CLI will be deprecated in June 2026. Transitioning to the successor, **Antigravity CLI**, is strongly recommended.
+
+#### Antigravity CLI (Recommended)
+```bash
+agy --install-extension https://github.com/DovahkiinYuzuko/nen-mcp-server
+```
+
+#### Gemini CLI (Legacy/Deprecated)
+```bash
+gemini extensions install https://github.com/DovahkiinYuzuko/nen-mcp-server
+```
 
 ### CLI Usage
 ```bash
